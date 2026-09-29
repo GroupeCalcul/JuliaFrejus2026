@@ -1,0 +1,17 @@
+[CUDA_Compiler_jll]
+__clear__ = ["version"]
+local = "true"
+
+[CUDA_Runtime_jll]
+__clear__ = ["version"]
+local = "true"
+
+[MPIPreferences]
+__clear__ = ["preloads"]
+_format = "1.1"
+abi = "MPICH"
+binary = "system"
+cclibs = ["sci_gnu_mpi", "sci_gnu", "dl", "dsmml"]
+libmpi = "libmpi_gnu_112.so"
+mpiexec = "srun"
+preloads_env_switch = "MPICH_GPU_SUPPORT_ENABLED"
