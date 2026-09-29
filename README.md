@@ -25,5 +25,17 @@ ssh -l votre_login arctic.criann.fr
 git clone https://github.com/GroupeCalcul/JuliaFrejus2026
 cd JuliaFrejus2026/MPI
 sbatch job_MPI.sl
+cat mpicode.log
+```
+
+```
+Hello world, I am 7 of 8
+Hello world, I am 5 of 8
+Hello world, I am 0 of 8
+Hello world, I am 1 of 8
+Hello world, I am 2 of 8
+Hello world, I am 3 of 8
+Hello world, I am 4 of 8
+Hello world, I am 6 of 8
 ```
 
