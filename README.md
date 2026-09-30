@@ -41,7 +41,7 @@ Hello world, I am 6 of 8
 ## Jupyter Julia Kernel
 
 Pour avoir accès au noyau Julia sur l'interface Jupyter du CRIANN, il suffit de faire les commandes suivantes
-sur votre serveur avant de démarrer l'instance sur l'interface Jupyter
+sur votre compte avant de démarrer l'instance sur l'interface Jupyter
 
 ```bash
 export SHARE=/home/2500001/PROJETS/M26182/PARTAGE/
