@@ -15,7 +15,7 @@ des travaux sur le cluster [Arctic du CRIANN](https://services.criann.fr/service
 sont disponibles:
 
 - AMDGPU : pour utiliser les GPU AMD 
-- CUDA : pourutiliser les cartes NVIDIA
+- CUDA : pour utiliser les cartes NVIDIA
 - MPI : pour lancer un programme utilisant cette bibliothèque parallèle.
 
 ## Exemple
