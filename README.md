@@ -11,7 +11,7 @@ Les objectifs de la formation sont:
 - Exploiter des cartes GPU dédiées au calcul.
 
 Ce  dépôt contient quelques supports pour la formation, notamment les scripts SLURM pour soummettre 
-des travaux sur le cluster [Artic du CRIANN](https://services.criann.fr/services/hpc/cluster-austral/guide/). Trois projets 
+des travaux sur le cluster [Arctic du CRIANN](https://services.criann.fr/services/hpc/cluster-austral/guide/). Trois projets 
 sont disponibles:
 
 - AMDGPU : pour utiliser les GPU AMD 
