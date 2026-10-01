@@ -40,13 +40,17 @@ Hello world, I am 6 of 8
 ```
 ## Jupyter Julia Kernel
 
-Pour avoir accès au noyau Julia sur l'interface Jupyter du CRIANN, il suffit de faire les commandes suivantes
-sur votre compte avant de démarrer l'instance sur l'interface Jupyter
+Pour avoir accès au noyau Julia sur l'interface Jupyter du CRIANN,
+il suffit de faire les commandes suivantes sur votre compte avant
+de démarrer l'instance sur l'interface Jupyter
 
 ```bash
 export SHARE=/home/2500001/PROJETS/M26182/PARTAGE/
 export MODULEPATH=$SHARE/privatemodules:$MODULEPATH
 module load julia
 julia -e 'import Pkg; Pkg.build("IJulia")'
+julia -e '
+    using IJulia
+    env = Dict(k => ENV[k] for k in ("JULIA_DEPOT_PATH", "JULIA_LOAD_PATH") if haskey(ENV, k))
+    installkernel("Julia", "--project=@."; env)'
 ```
-
