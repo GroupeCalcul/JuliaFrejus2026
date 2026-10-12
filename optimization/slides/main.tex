@@ -1,0 +1,133 @@
+% !TEX program = latexmk
+% !TEX options = -lualatex -synctex=1 -interaction=nonstopmode -file-line-error -shell-escape "%DOC%"
+% !TeX root = main.tex
+% LTeX: enabled=false
+
+\documentclass[aspectratio=169,11pt]{beamer}
+
+%== Theme =================================================
+\usetheme[
+  progressbar=frametitle,
+  sectionpage=none,
+]{moloch}
+
+%== Packages ==============================================
+%-- Language and fonts (LuaLaTeX) -------------------------
+\usepackage[english]{babel}
+\usepackage{microtype}
+
+\usepackage{fontspec}
+\setsansfont{Fira Sans}[UprightFont=*-Light, BoldFont=*-Regular, ItalicFont=*-LightItalic, BoldItalicFont=*-Italic]
+\setmonofont{Fira Mono}[Scale=MatchLowercase]
+
+%-- Images and drawing ------------------------------------
+\usepackage{graphicx}
+\graphicspath{{./images/}}
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+%-- Code --------------------------------------------------
+% Frames containing code must be declared `[fragile]`.
+\usepackage{listings}
+\lstdefinelanguage{Julia}{
+  keywords={begin, break, const, continue, do, else, elseif, end, for, function,
+    global, if, import, in, let, local, macro, module, return, struct, using,
+    while, where},
+  keywordstyle=\bfseries,
+  morekeywords=[2]{true, false, nothing},
+  keywordstyle=[2]\bfseries,
+  comment=[l]{\#},
+  commentstyle=\itshape\color{Grey},
+  morestring=[b]", % chktex 18
+  stringstyle=\color{Green},
+  sensitive=true,
+}
+\lstset{
+  language=Julia,
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines,
+  frame=lines,
+  framesep=1.5mm,
+  showstringspaces=false,
+  upquote=true,
+}
+
+%== Colors ================================================
+%-- Palette -----------------------------------------------
+\definecolor{Blue}{HTML}{1F77B4}
+\definecolor{Orange}{HTML}{FF7F0E}
+\definecolor{Green}{HTML}{2CA02C}
+\definecolor{Red}{HTML}{D62728}
+\definecolor{Grey}{HTML}{7F7F7F}
+\definecolor{Purple}{HTML}{9467BD}
+\definecolor{Brown}{HTML}{8C564B}
+\definecolor{Pink}{HTML}{E377C2}
+
+\colorlet{TitleBg}{black!12.5}
+
+%-- Moloch colors -----------------------------------------
+% Accent (default orange): alerts, progress bar, title separator
+\molochcolors{alerted text=Red, progressbar fg=Red}
+\setbeamercolor{title separator}{fg=Red}
+\molochcolors{frametitle bg=TitleBg, frametitle fg=black}
+
+%== Beamer template =======================================
+\setbeamertemplate{page number in head/foot}[totalframenumber]
+\setbeamertemplate{frame footer}{%
+  \insertshortauthor\hspace{1em}\textbar\hspace{1em}\insertshorttitle%
+}
+\setbeamercovered{transparent}
+\setbeamersize{text margin left=2ex,text margin right=2ex}
+
+%== Custom commands and environments ======================
+%-- Colored text ------------------------------------------
+\NewDocumentCommand{\Bk}{m}{\textcolor{black}{#1}}
+\NewDocumentCommand{\Gy}{m}{\textcolor{Grey}{#1}}
+\NewDocumentCommand{\Bu}{m}{\textcolor{Blue}{#1}}
+\NewDocumentCommand{\Or}{m}{\textcolor{Orange}{#1}}
+\NewDocumentCommand{\Gr}{m}{\textcolor{Green}{#1}}
+\NewDocumentCommand{\Rd}{m}{\textcolor{Red}{#1}}
+\NewDocumentCommand{\Pu}{m}{\textcolor{Purple}{#1}}
+
+%-- Bordered blocks ---------------------------------------
+% Usage: \begin{BlockBlue}{Title} ... \end{BlockBlue}   (empty {} = no title)
+\tcbset{blockstyle/.style={colback=white, boxrule=0.8pt, sharp corners, fonttitle=\bfseries}}
+\newtcolorbox{BlockBlue}[1]{blockstyle, colframe=Blue!50, coltitle=black, title={#1}}
+\newtcolorbox{BlockGreen}[1]{blockstyle, colframe=Green!50, coltitle=black, title={#1}}
+\newtcolorbox{BlockRed}[1]{blockstyle, colframe=Red!50, coltitle=black, title={#1}}
+\newtcolorbox{BlockGrey}[1]{blockstyle, colframe=Grey!50, coltitle=black, title={#1}}
+
+
+% Title ===================================================
+\title[Performance optimization]{%
+  Performance optimization: Benchmark and Profiling
+}
+\subtitle{Julia4HPC --- Fréjus 2026}
+
+\author[Zoïs Moitier @ ENSTA]{%
+  Zoïs \textsc{Moitier}%
+}
+\institute{\( \text{IDEFIX} \subset \text{UMA} \subset \text{ENSTA} \subset \text{IP Paris} \)}
+
+\date[13/10/2026]{October 13, 2026}
+
+\subject{Julia}
+
+
+% Automatic TOC ===========================================
+\AtBeginSection[]{%
+  \begin{frame}{Table of Contents}
+    \tableofcontents[currentsection,hideothersubsections]
+  \end{frame}
+}
+
+
+%==========================================================
+\begin{document}
+
+\input{content}
+
+\end{document}

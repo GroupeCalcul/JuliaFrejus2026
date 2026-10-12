@@ -1,0 +1,249 @@
+% !TeX root = main.tex
+% LTeX: language=en-US
+
+\begin{frame}
+    \titlepage{}
+\end{frame}
+
+\begin{frame}{Table of Contents}
+    \tableofcontents
+\end{frame}
+
+%==========================================================
+\section{Introduction}
+
+\begin{frame}{Context}
+    \begin{BlockBlue}{\emph{maybe} Kent Beck citation}
+        \begin{enumerate}
+            \item \makebox[7em][l]{\emph{Make it work}}\only<2->{\( \leftarrow \) done!}
+            \item \makebox[7em][l]{\emph{Make it right}}\only<2->{\( \leftarrow \) done!}
+            \item \only<1>{\emph{Make it fast}}\only<2->{\makebox[7em][l]{\textbf{\emph{Make it fast}}}\textbf{\( \leftarrow \) to do!}}
+        \end{enumerate}
+    \end{BlockBlue}
+
+    \bigskip
+
+    \visible<3->{%
+        \begin{BlockBlue}{Donald Knuth}
+            \itshape
+            \visible<4>{We should forget about small efficiencies, say about 97\% of the time:}\par
+            Premature optimization is the root of all evil.
+            \visible<4>{Yet we should not pass up our opportunities in that critical 3\%.}
+        \end{BlockBlue}
+    }
+\end{frame}
+
+
+\begin{frame}{Slow code, fast Julia}
+    \begin{BlockBlue}{Why is code slow? By potential gain}
+        \begin{itemize}%\setlength{\itemsep}{0pt}\setlength{\topsep}{0pt}
+            \item \textbf{Language / compiler}: in Julia, type stability and allocations
+            \item \textbf{Memory / architecture}: caches, access order, SIMD (4--8 operations at once)
+            \item \textbf{Algorithm}: complexity, redundant computations, existing library
+            \item \textbf{Parallelism}: threads, MPI, GPU (other sessions)
+        \end{itemize}
+    \end{BlockBlue}
+
+    \pause\smallskip
+
+    \begin{BlockGreen}{Why can Julia be fast? Compilation for concrete types}
+        \begin{itemize}%\setlength{\itemsep}{0pt}\setlength{\topsep}{0pt}
+            \item Each function is compiled (LLVM) \textbf{for the concrete types of its arguments}
+            \item If the compiler knows all the types \( \to \) machine code comparable to C/Fortran
+            \item Otherwise \( \to \) dynamic dispatch, ``boxed'' values, allocations: slower
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+
+\begin{frame}{The method}
+    \begin{enumerate}
+        \item \textbf{Baseline}: measure + correctness test
+        \item \textbf{Profile}: where is the time spent?
+        \item \textbf{Hypothesis}: why here?
+        \item \textbf{One} change
+        \item \textbf{Re-measure} + check the result
+        \item \textbf{keep or revert}: start again at 2.
+    \end{enumerate}
+
+    \bigskip
+
+    \alert{\textbf{Never optimize before measuring.}}
+\end{frame}
+
+%==========================================================
+\section{Benchmark}
+
+\subsection{Exercise 1: Measuring correctly}
+
+\begin{frame}{Exercise 1: Measuring correctly}
+    \texttt{exercises/01\_measure.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item 1st call = JIT compilation: ignore it; a single run is noisy
+            \item \textbf{Performance-critical code goes inside functions}
+            \item \texttt{@btime} / \texttt{@benchmark}, and \texttt{\$} to interpolate globals
+            \item Mutating function: \texttt{setup=(\ldots) evals=1}
+            \item Floats: compare with \texttt{\(\approx\)}, never \texttt{==}
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+%==========================================================
+\subsection{Exercise 2: Type stability}
+
+\begin{frame}{Exercise 2: Type stability}
+    \texttt{exercises/02\_types.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item Diagnose with \texttt{@code\_warntype} (red \texttt{Any}) and \texttt{@report\_opt} (JET)
+            \item Non-\texttt{const} global \( \to \) \texttt{const} or argument (\( \times 40 \))
+            \item Field of abstract type \( \to \) parametric \texttt{struct} (\( \times 70 \))
+            \item \texttt{Dict\{String,Any\}} \( \to \) function barrier (\( \times 150 \))
+            \item Type instability often shows up as unexpected allocations
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+%==========================================================
+\subsection{Exercise 3: Allocations and GC}
+
+\begin{frame}{Exercise 3: Allocations and GC}
+    \texttt{exercises/03\_allocations.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item \texttt{@benchmark}: the GC shows up in the mean time, not in the min
+            \item Temporaries: fusion \texttt{.}, \texttt{sum(f, x)}, buffer \texttt{f!}
+            \item Slices copy: \texttt{@views}; growing arrays: preallocate, \texttt{sizehint!}
+            \item Small fixed-size vectors: \texttt{SVector}, 0 allocations
+            \item \alert{Goal: no allocations in critical loops}
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+
+%==========================================================
+\section{Profiling}
+
+\subsection{Exercise 4: Profiling}
+
+\begin{frame}{Exercise 4: Profiling}
+    \texttt{exercises/04\_profiling.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item Run once before profiling; profile a long enough run
+            \item Flame graph: width = time; \Rd{\textbf{red}} = dispatch; \Or{\textbf{yellow}} = GC
+            \item \texttt{@profview\_allocs}: where the allocations come from
+            \item \textbf{After each fix, profile again}: the hot spot moves
+            \item 1.27 s \( \to \) 10.5 ms (\( \times 120 \))
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+%==========================================================
+\subsection{Exercise 5: Memory and cache}
+
+\begin{frame}{Exercise 5: Memory and cache}
+    \texttt{exercises/05\_memory.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item Column-major: inner loop over the \textbf{first} index
+            \item The throughput drops in steps when the data leave L2, then L3
+            \item Matvec (0.25 flop/byte): memory-bound, \texttt{mul!} \( \approx \) a good loop
+            \item Matmul (\( n/12 \) flop/byte): compute-bound, BLAS \( \times 5 \) (\( \times 18 \) with 4 threads)
+            \item \alert{Before writing a kernel, check the libraries}
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+%==========================================================
+\section{Case study}
+
+\subsection{Exercise 6: Case study}
+
+\begin{frame}{Exercise 6: 2D heat equation}
+    \texttt{exercises/06\_case\_study.ipynb}
+
+    \pause\bigskip
+
+    \begin{BlockGreen}{What we learned}
+        \begin{itemize}
+            \item Type stability first: most of the gain (\( \times 48 \))
+            \item Then allocations (\( \times 56 \)), then loop order (\( \times 108 \))
+            \item \texttt{@inbounds @simd}: \( \times 260 \), once the code is clean
+            \item Threads bring little on a small grid
+            \item \textbf{One change at a time}, check after each one
+        \end{itemize}
+    \end{BlockGreen}
+\end{frame}
+
+%==========================================================
+\section{Wrap-up}
+
+\begin{frame}{Checklist}
+    \begin{enumerate}
+        \item \textbf{Algorithm}: complexity? redundancy? library?
+        \item \textbf{Measure}: \texttt{@btime f(\$x)} + correctness test
+        \item \textbf{Types}: \texttt{@code\_warntype}, \texttt{@report\_opt}, \texttt{const}, parametric \texttt{struct}s, barriers
+        \item \textbf{Allocations}: \% of GC, \texttt{@views}, fusion, buffers, \texttt{StaticArrays}
+        \item \textbf{Profile}: \texttt{@profview}, \texttt{@profview\_allocs}, profile again
+        \item \textbf{Memory}: loop order, contiguity; memory- or compute-bound?
+        \item \textbf{Only then}: SIMD, threads, MPI, GPU
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Later this week}
+    \begin{BlockBlue}{Related sessions}
+        \begin{itemize}
+            \item \textbf{Shared-memory parallelism}: Threads.jl, DataFlowTasks.jl
+            \item \textbf{GPU}: a different execution model (transfers, massive parallelism)
+            \item \textbf{Multiple dispatch and generic typing}: parametric types, generic code
+            \item \textbf{MPI}: distributed-memory parallelism
+        \end{itemize}
+    \end{BlockBlue}
+
+    \bigskip
+
+    \alert{\textbf{Parallelize code that is already fast on one core.}}
+\end{frame}
+
+\begin{frame}{Resources}
+    \begin{itemize}
+        \item Links:
+              \begin{itemize}
+                  \item \href{https://docs.julialang.org/en/v1/manual/profile/}{\Pu{Profiling}}, Julia manual
+                  \item \href{https://docs.julialang.org/en/v1/manual/performance-tips/}{\Pu{Performance Tips}}, Julia manual
+                  \item \href{https://book.sciml.ai/notes/18-Code_Profiling_and_Optimization/}{\Pu{Code Profiling and Optimization}}, SciML book
+              \end{itemize}
+
+        \item Standard libraries:
+              \begin{itemize}
+                  \item Profile, LinearAlgebra, Test
+              \end{itemize}
+
+        \item Third-party packages:
+              \begin{itemize}
+                  \item BenchmarkTools.jl, JET.jl, StaticArrays.jl, ProfileCanvas.jl
+              \end{itemize}
+    \end{itemize}
+
+    \bigskip
+
+    \centering
+    \alert{\textbf{Measure \( \to \) Understand \( \to \) Optimize \( \to \) Verify}}
+\end{frame}
