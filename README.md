@@ -10,7 +10,20 @@ Les objectifs de la formation sont:
 - Utiliser Julia sur un cluster HPC, paralléliser avec SIMD, "multithreading", calcul distribué natif ou MPI.
 - Exploiter des cartes GPU dédiées au calcul.
 
-Ce  dépôt contient quelques supports pour la formation, notamment les scripts SLURM pour soummettre 
+## Programme
+
+- David Métivier "Présentation générale Julia et de quelques écosystèmes"
+- Zois Moitier "Profilage et Optimisation de performances"
+- Luiz Faria "Parallélisation à mémoire partagée Threads.jl DataFlowTaks.jl"
+- Ludovic Räss "GPU" 
+- Oskar Laverny "Dispatch multiple et typage générique BigFloats"
+- Marc Fuentes "Interface avec C/Fortran/Python"
+- Marc Fuentes "Création de dépendances compilées avec BinaryBuilder.jl"
+- Juan-Ignacio Polanco "MPI"
+
+## Scripts SLURM
+
+Ce  dépôt contient les scripts SLURM pour soummettre 
 des travaux sur le cluster [Arctic du CRIANN](https://services.criann.fr/services/hpc/cluster-austral/guide/). Trois projets 
 sont disponibles:
 
@@ -18,7 +31,6 @@ sont disponibles:
 - CUDA : pour utiliser les cartes NVIDIA
 - MPI : pour lancer un programme utilisant cette bibliothèque parallèle.
 
-## Exemple
 
 ```bash
 ssh -l votre_login arctic.criann.fr
