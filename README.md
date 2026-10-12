@@ -15,7 +15,7 @@ Les objectifs de la formation sont:
 - David Métivier "Présentation générale Julia et de quelques écosystèmes"
 - Zois Moitier "Profilage et Optimisation de performances"
 - Luiz Faria "Parallélisation à mémoire partagée Threads.jl DataFlowTaks.jl"
-- Ludovic Räss "GPU" 
+- [Ludovic Räss "GPU"](https://github.com/luraess/Julia4HPC-GPU) 
 - Oskar Laverny "Dispatch multiple et typage générique BigFloats"
 - Marc Fuentes "Interface avec C/Fortran/Python"
 - Marc Fuentes "Création de dépendances compilées avec BinaryBuilder.jl"
