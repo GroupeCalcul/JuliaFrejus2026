@@ -64,5 +64,6 @@ julia -e 'import Pkg; Pkg.build("IJulia")'
 julia -e '
     using IJulia
     env = Dict(k => ENV[k] for k in ("JULIA_DEPOT_PATH", "JULIA_LOAD_PATH") if haskey(ENV, k))
+    env["ROCM_PATH"] = "/soft/amd/rocm-6.4.0"
     installkernel("Julia", "--project=@."; env)'
 ```
