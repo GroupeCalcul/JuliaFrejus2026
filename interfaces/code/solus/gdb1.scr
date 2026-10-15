@@ -1,0 +1,5 @@
+file julia
+set args alloc_solus.jl
+set breakpoint pending on
+b set_values
+run

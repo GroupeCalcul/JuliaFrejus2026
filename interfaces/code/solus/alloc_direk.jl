@@ -1,5 +1,5 @@
 using Libdl: dlopen, dlsym
-lib_alloc = dlopen("./liballoc_direk.so")
+lib_alloc = dlopen("./lib_alloc.so")
 all_ptr, fre_ptr = map(x->dlsym(lib_alloc, x), [:my_alloc, :my_free])
 
 

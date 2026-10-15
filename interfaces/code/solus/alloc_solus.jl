@@ -20,5 +20,6 @@ function get_values!(ind, nval, vec::Vector{Float64})
               nval, ind, vec)
 end
 
-
+a = alloc(3)
+set_values(a, [1., 2.])
 
