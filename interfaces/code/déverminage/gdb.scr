@@ -1,0 +1,4 @@
+set breakpoint pending on
+break set_values
+break get_values
+c

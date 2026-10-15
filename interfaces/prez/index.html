@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="aitzkora (INRIA Bagnères-de-Bigorre)">
+  <title>Interfacer Julia</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-2579ab53c93bbd8f2c52734df420ad12.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="fig/pic_midi.jpg" data-background-size="cover" class="quarto-title-block center">
+  <h1 class="title">Interfacer Julia</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+aitzkora (INRIA Bagnères-de-Bigorre)
+</div>
+</div>
+</div>
+
+</section>
+<section id="plan-de-lexposé" class="slide level2">
+<h2>plan de l’exposé</h2>
+<ul>
+<li>motivations</li>
+<li>le vénérable <code>ccall</code></li>
+<li>utilisations basiques
+<ul>
+<li>imports multiples</li>
+<li>gestion de la mémoire</li>
+<li>déverminage</li>
+<li>appels de fonctions</li>
+</ul></li>
+<li>portabilité</li>
+<li>géneration d’interface</li>
+<li>langages de haut-niveau :
+<ul>
+<li>Python</li>
+<li>R</li>
+</ul></li>
+</ul>
+</section>
+<section id="motivations" class="slide level2">
+<h2>motivations</h2>
+<ol type="1">
+<li>Réutiliser tout le code qui marche (BLAS, ODE, LAPACK, etc…)</li>
+<li>utiliser Julia comme une interface de script à un logiciel écrit en C/Fortran/Rust</li>
+<li>cas des sources fermées avec une IPA connue</li>
+<li>Étendre les possibilités du langage</li>
+</ol>
+<div title="Portée de l'exposé">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Portée de l’exposé</strong></p>
+</div>
+<div class="callout-content">
+<p>On s’intéresse ici au fait que <code>Julia</code> appelle d’autres languages et pas l’inverse. Cependant Julia peut appeler un code qui appelle lui-même Julia</p>
+</div>
+</div>
+</div>
+</div>
+<div title="Portabilité">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Portabilité</strong></p>
+</div>
+<div class="callout-content">
+<p>certaines choses sont spécifiques à Linux, ou à unsystème POSIX et n’ont pas été testés sous OuïneDoze. La plupart des des éléments du TP peuvent être fait sur Arctic</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<section id="le-vénérable-ccall" class="title-slide slide level1 center">
+<h1>le vénérable <code>ccall</code></h1>
+<ul>
+<li>Comment appeler une fonction dans une bibliothèque dynamique ?</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="" aria-label="1"></a><span class="fu">ccall</span>((<span class="op">:</span>funcName, library), returnType, (argType1, argType2, <span class="op">...</span>), (argVal1, argVal2, <span class="op">...</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>utilisation intensive : combien de <code>ccall</code> dans les sources de Julia ?</li>
+</ul>
+
+<img data-src="fig/ccall.svg" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="ccall-en-c" class="slide level2">
+<h2><code>ccall</code> en C</h2>
+<ul>
+<li><p>Écrivez dans le fichier <code>skel.c</code> la fonction</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource C number-lines code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="" aria-label="1"></a><span class="dt">int</span> ajoute2<span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-2"><a href="" aria-label="2"></a>   <span class="cf">return</span> x<span class="op">+</span><span class="dv">2</span><span class="op">;</span> </span>
+<span id="cb2-3"><a href="" aria-label="3"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>au moyen de <span class="math inline">\(\tt{x}  \in \{\tt{vi}, \tt{emacs}, \tt{nano}\}\)</span></p></li>
+<li><p>Compilez le fichier : remarquez <code>--shared</code> et <code>.so</code> (<code>.dylib</code> on OSX <span class="emoji" data-emoji="thinking">🤔</span>)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="" aria-label="1"></a><span class="fu">gcc</span> <span class="at">-o</span> ajoute2.so <span class="at">--shared</span> skel.c</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Dorénavant, vous pouvez appeler <code>ajoute2</code> au moyen de</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="" aria-label="1"></a>w <span class="op">=</span> <span class="fu">ccall</span>((<span class="op">:</span>ajoute2, <span class="st">"./ajoute2.so"</span>), <span class="dt">Int32</span>, (<span class="dt">Int32</span>,), <span class="fl">12</span>) <span class="co"># must return 14</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>ajoute2</code> est un symbole de <code>ajoute2.so</code> <span class="math inline">\(\Rightarrow\)</span> <code>:</code></li>
+<li>Bien utiliser <code>(Int32,)</code> et pas <code>(Int32)</code> (Tuple)</li>
+<li>Remplacez <code>Int32</code> par <code>Int64</code> or <code>Float64</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="intermède-1" class="slide level2">
+<h2>Intermède 1</h2>
+<ol type="1">
+<li>bibliothèque dynamique : code chargé dynamiquement à l’exécution</li>
+</ol>
+<ul>
+<li>économie de stockage <span class="emoji" data-emoji="smile">😄</span> vs dépendances <span class="emoji" data-emoji="neutral_face">😐</span></li>
+</ul>
+<ol start="2" type="1">
+<li>bibliothèque statique : code (suite d’instructions) embarqué directement dans l’exécutable<br>
+</li>
+</ol>
+<ul>
+<li>indépendance <span class="emoji" data-emoji="smile">😄</span> vs taille importante <span class="emoji" data-emoji="neutral_face">😐</span></li>
+</ul>
+<ol start="3" type="1">
+<li>code relogeable (-fPIC) : adresses relatives pour les fonctions</li>
+<li>code non-relogeable : adresses absolues pour les fonctions</li>
+</ol>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>statique (.a)</th>
+<th>dynamique(.so)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>relogeable</td>
+<td>✔️</td>
+<td>✔️</td>
+</tr>
+<tr class="even">
+<td>non relogeable</td>
+<td>✔️</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="intermède-2" class="slide level2">
+<h2>Intermède 2</h2>
+<ul>
+<li><p>Décoration de noms (mangling) : processus d’encodage de noms de symboles dans un binaire</p></li>
+<li><p>permet de gèrer des languages non natifs “autre que le C”</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="" aria-label="1"></a><span class="ex">%&nbsp;echo</span> <span class="st">"subroutine f()\n print *, "</span>haha<span class="st">"\n end subroutine"</span> <span class="op">&gt;</span> f1.f90</span>
+<span id="cb5-2"><a href="" aria-label="2"></a><span class="ex">%&nbsp;gfortran</span> <span class="at">-c</span> f1.f90</span>
+<span id="cb5-3"><a href="" aria-label="3"></a><span class="ex">%&nbsp;nm</span> f1.o</span>
+<span id="cb5-4"><a href="" aria-label="4"></a><span class="ex">0000000000000000</span> T f_</span>
+<span id="cb5-5"><a href="" aria-label="5"></a>                 <span class="ex">U</span> _gfortran_st_write</span>
+<span id="cb5-6"><a href="" aria-label="6"></a>                 <span class="ex">U</span> _gfortran_st_write_done</span>
+<span id="cb5-7"><a href="" aria-label="7"></a>                 <span class="ex">U</span> _gfortran_transfer_real_write</span>
+<span id="cb5-8"><a href="" aria-label="8"></a>                 <span class="ex">U</span> __stack_chk_fail</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>permet la surcharge</p></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="" aria-label="1"></a><span class="ex">%&nbsp;echo</span> <span class="st">"int f(int x) { return x+1;}\nfloat f(float x) {return x+1;}"</span> <span class="op">&gt;</span> e1.cpp</span>
+<span id="cb6-2"><a href="" aria-label="2"></a><span class="ex">%&nbsp;g++</span> <span class="at">-c</span> e1.cpp <span class="kw">&amp;&amp;</span> <span class="fu">nm</span> e1.o</span>
+<span id="cb6-3"><a href="" aria-label="3"></a><span class="ex">000000000000000f</span> T _Z1ff</span>
+<span id="cb6-4"><a href="" aria-label="4"></a><span class="ex">0000000000000000</span> T _Z1fi</span>
+<span id="cb6-5"><a href="" aria-label="5"></a><span class="ex">%</span> nm e1.o <span class="kw">|</span> <span class="ex">c++filt</span></span>
+<span id="cb6-6"><a href="" aria-label="6"></a><span class="ex">000000000000000f</span> T f<span class="er">(</span><span class="ex">float</span><span class="kw">)</span></span>
+<span id="cb6-7"><a href="" aria-label="7"></a><span class="ex">0000000000000000</span> T f<span class="er">(</span><span class="ex">int</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="ccall-en-fortran" class="slide level2">
+<h2><code>ccall</code> en Fortran</h2>
+<ul>
+<li><p>Mettez dans le fichier <code>skel.f90</code> la sous-routine suivante</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource f90 number-lines code-with-copy"><code class="sourceCode fortranfree"><span id="cb7-1"><a href="" aria-label="1"></a><span class="kw">subroutine</span> ajoute2(x, x2)</span>
+<span id="cb7-2"><a href="" aria-label="2"></a>  <span class="dt">integer</span>, <span class="dt">intent(in)</span> <span class="dt">::</span> x</span>
+<span id="cb7-3"><a href="" aria-label="3"></a>  <span class="dt">integer</span>, <span class="dt">intent(out)</span> <span class="dt">::</span> x2</span>
+<span id="cb7-4"><a href="" aria-label="4"></a>  x2 <span class="kw">=</span> x <span class="kw">+</span> <span class="dv">2</span></span>
+<span id="cb7-5"><a href="" aria-label="5"></a><span class="kw">end subroutine</span> ajoute2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Compilez le fichier</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="" aria-label="1"></a><span class="ex">gfortran</span> <span class="at">-o</span> ajoute2.so <span class="at">--shared</span> skel.f90</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Dorénavant, vous pouvez appeler <code>ajoute2</code> au moyen de</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="" aria-label="1"></a>w <span class="op">=</span> <span class="fu">Ref</span><span class="dt">{Int32}</span>(<span class="fl">0</span>)</span>
+<span id="cb9-2"><a href="" aria-label="2"></a><span class="fu">ccall</span>((<span class="op">:</span>ajoute2_, <span class="st">"./ajoute2.so"</span>), Cvoid, (<span class="dt">Ref</span>{<span class="dt">Int32</span>},<span class="dt">Ref</span>{<span class="dt">Int32</span>}), <span class="fu">Int32</span>(<span class="fl">12</span>), w); w[] <span class="co"># returns 14</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>:ajoute2_</code> utilise la décoration de nom (<code>nm -D ajoute2.so</code>)</li>
+<li><span class="emoji" data-emoji="astonished">😲</span> Fortran passe ses arguments par adresse <span class="math inline">\(\Rightarrow\)</span> <code>Ref{Int32}</code></li>
+<li>remplacer <code>Int32</code> par <code>Int64</code> ou <code>Float64</code> <span class="math inline">\(\Rightarrow\)</span> Was ist den loss ?</li>
+</ul></li>
+</ul>
+</section>
+<section id="ccall-en-c-1" class="slide level2">
+<h2>ccall en c++</h2>
+<ul>
+<li><p>Mettez dans le fichier <code>skel.cpp</code> la fonction suivante</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href="" aria-label="1"></a><span class="at">extern</span> <span class="st">"C"</span> <span class="op">{</span>                           </span>
+<span id="cb10-2"><a href="" aria-label="2"></a>  <span class="dt">void</span> ajoute2<span class="op">(</span><span class="at">const</span> <span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> <span class="op">&amp;</span> y<span class="op">){</span> </span>
+<span id="cb10-3"><a href="" aria-label="3"></a>    y <span class="op">=</span> x<span class="op">+</span><span class="dv">2</span><span class="op">;</span> </span>
+<span id="cb10-4"><a href="" aria-label="4"></a>  <span class="op">}</span></span>
+<span id="cb10-5"><a href="" aria-label="5"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Compilez le fichier</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="" aria-label="1"></a><span class="ex">g++</span> <span class="at">-o</span> ajoute2.so <span class="at">--shared</span> skel.cpp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Dorénavant, vous pouvez appeler <code>ajoute2</code> au moyen de</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="" aria-label="1"></a>w <span class="op">=</span> <span class="fu">Ref</span><span class="dt">{Int32}</span>(<span class="fl">0</span>)</span>
+<span id="cb12-2"><a href="" aria-label="2"></a><span class="fu">ccall</span>((<span class="op">:</span>ajoute2, <span class="st">"./ajoute2.so"</span>), Cvoid, (<span class="dt">Int32</span>,<span class="dt">Ref</span>{<span class="dt">Int32</span>}), <span class="fu">Int32</span>(<span class="fl">12</span>), w); w[]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>on utilise des références pour avoir du vrai C++ 🢣 <code>Ref{Int32}</code></li>
+<li>on utilise <code>extern "C"</code> pour rendre l’appel compatible avec du C</li>
+</ul></li>
+<li><p>Pour des projets compliqués 🢣 CxxWrap.jl</p></li>
+</ul>
+</section>
+<section id="ccall-en-rust" class="slide level2">
+<h2>ccall en Rust</h2>
+<ul>
+<li><p>Mettez dans le fichier <code>ajoute.rs</code> la fonction suivante</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource rs number-lines code-with-copy"><code class="sourceCode rust"><span id="cb13-1"><a href="" aria-label="1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
+<span id="cb13-2"><a href="" aria-label="2"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="st">"C"</span> <span class="kw">fn</span> ajoute2(a<span class="op">:</span> <span class="dt">i64</span>) <span class="op">-&gt;</span> <span class="dt">i64</span> <span class="op">{</span></span>
+<span id="cb13-3"><a href="" aria-label="3"></a>        <span class="cf">return</span> a<span class="op">+</span><span class="dv">2</span> </span>
+<span id="cb13-4"><a href="" aria-label="4"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Compilez le fichier</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="" aria-label="1"></a><span class="ex">rustc</span> ajoute.rs <span class="at">--crate-type</span><span class="op">=</span>cdylib</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Dorénavant, vous pouvez appeler <code>ajoute2</code> au moyen de</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="" aria-label="1"></a>w <span class="op">=</span> <span class="fu">ccall</span>((<span class="op">:</span>ajoute2, <span class="st">"./libajoute.so"</span>), <span class="dt">Int64</span>, (<span class="dt">Int64</span>,), <span class="fl">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>l’annotation de type en Rust impose les mêmes types</li>
+<li>on utilise <code>pub extern "C"</code> pour rendre l’appel compatible avec du C</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="tableaux-c" class="title-slide slide level1 center">
+<h1>tableaux (C)</h1>
+<ul>
+<li><p>considérons le code suivant</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource c number-lines code-with-copy"><code class="sourceCode c"><span id="cb16-1"><a href="" aria-label="1"></a><span class="pp">#include </span><span class="im">&lt;inttypes.h&gt;</span></span>
+<span id="cb16-2"><a href="" aria-label="2"></a><span class="dt">double</span> mysum<span class="op">(</span><span class="dt">int64_t</span> m<span class="op">,</span> <span class="dt">int64_t</span> n<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span>x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-3"><a href="" aria-label="3"></a>  <span class="dt">double</span> s <span class="op">=</span> <span class="fl">0.</span><span class="op">;</span></span>
+<span id="cb16-4"><a href="" aria-label="4"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int64_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> m<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb16-5"><a href="" aria-label="5"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int64_t</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> </span>
+<span id="cb16-6"><a href="" aria-label="6"></a>      s <span class="op">+=</span> x<span class="op">[</span>i <span class="op">*</span> n <span class="op">+</span> j<span class="op">];</span></span>
+<span id="cb16-7"><a href="" aria-label="7"></a>  <span class="cf">return</span> s<span class="op">;</span></span>
+<span id="cb16-8"><a href="" aria-label="8"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>on va le nourrir en Julia avec une matrice</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="" aria-label="1"></a>a <span class="op">=</span> <span class="fu">reshape</span>(<span class="fu">collect</span>(<span class="fl">1</span>.<span class="op">:</span><span class="fl">10</span>.), <span class="fl">5</span>, <span class="fl">2</span>)</span>
+<span id="cb17-2"><a href="" aria-label="2"></a>s <span class="op">=</span> <span class="fu">ccall</span>((<span class="op">:</span>mysum, <span class="st">"./mysum.so"</span>), <span class="dt">Float64</span>, (<span class="dt">Int64</span>, <span class="dt">Int64</span>, <span class="dt">Ptr</span>{<span class="dt">Float64</span>}), <span class="fu">size</span>(a, <span class="fl">1</span>), <span class="fu">size</span>(a, <span class="fl">2</span>), a); </span>
+<span id="cb17-3"><a href="" aria-label="3"></a><span class="fu">println</span>(s)  <span class="co"># renvoie 55.0 </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Pour importer une matrice de type <code>T</code>, on utilise <code>Ptr{T}</code></p></li>
+</ul>
+</section>
+<section id="tableaux-fortran" class="slide level2">
+<h2>tableaux (Fortran)</h2>
+<ul>
+<li><p>soit le code</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource f90 number-lines code-with-copy"><code class="sourceCode fortranfree"><span id="cb18-1"><a href="" aria-label="1"></a><span class="kw">subroutine</span> mysum(m,n,x,s)</span>
+<span id="cb18-2"><a href="" aria-label="2"></a>  <span class="kw">use</span> iso_c_binding</span>
+<span id="cb18-3"><a href="" aria-label="3"></a>  <span class="dt">integer(c_int64_t)</span>, <span class="dt">intent(in)</span>, <span class="dt">value</span> <span class="dt">::</span> m,n</span>
+<span id="cb18-4"><a href="" aria-label="4"></a>  <span class="dt">real(c_double)</span>    , <span class="dt">intent(in)</span> <span class="dt">::</span> x(m,n) <span class="co">! testez avec x(:,:) </span></span>
+<span id="cb18-5"><a href="" aria-label="5"></a>  <span class="dt">real(c_double)</span>    , <span class="dt">intent(out)::</span> s</span>
+<span id="cb18-6"><a href="" aria-label="6"></a>  s <span class="kw">=</span> <span class="fu">sum</span>(x)</span>
+<span id="cb18-7"><a href="" aria-label="7"></a><span class="kw">end subroutine</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>appel en Julia</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="" aria-label="1"></a>a <span class="op">=</span> <span class="fu">reshape</span>(<span class="fu">collect</span>(<span class="fl">1</span>.<span class="op">:</span><span class="fl">10</span>.), <span class="fl">5</span>, <span class="fl">2</span>)</span>
+<span id="cb19-2"><a href="" aria-label="2"></a>s <span class="op">=</span> <span class="fu">Ref</span>(<span class="fl">0.0</span>)</span>
+<span id="cb19-3"><a href="" aria-label="3"></a><span class="fu">ccall</span>((<span class="op">:</span>mysum_, <span class="st">"./mysumf.so"</span>), Cvoid, (<span class="dt">Int64</span>, <span class="dt">Int64</span>, <span class="dt">Ptr</span>{<span class="dt">Float64</span>}, <span class="dt">Ref</span>{<span class="dt">Float64</span>}), <span class="fu">size</span>(a, <span class="fl">1</span>), <span class="fu">size</span>(a, <span class="fl">2</span>), a, s); </span>
+<span id="cb19-4"><a href="" aria-label="4"></a><span class="fu">println</span>(s[])  <span class="co"># renvoie 55.0 </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Remarques :</p>
+<ul>
+<li>utilisation de <code>iso_c_binding</code> 🢣 <code>c_double</code>, <code>int_64_t</code></li>
+<li>qualificateur <code>value</code> 🢣 pas besoin de réference</li>
+<li>attention ne marche pas avec <code>x(:,:)</code> (assumed-shape arrays)</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="imports-multiples" class="title-slide slide level1 center">
+<h1>imports multiples</h1>
+<ul>
+<li>Soit la mini-bibliothèque d’allocations suivante</li>
+</ul>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>alloc.c</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20" data-filename="alloc.c"><pre class="sourceCode numberSource C number-lines code-with-copy"><code class="sourceCode c"><span id="cb20-1"><a href="" aria-label="1"></a><span class="pp">#define ALLOC_MAX </span><span class="dv">4</span></span>
+<span id="cb20-2"><a href="" aria-label="2"></a><span class="dt">double</span> <span class="op">*</span>table<span class="op">[</span>ALLOC_MAX<span class="op">];</span></span>
+<span id="cb20-3"><a href="" aria-label="3"></a><span class="dt">int64_t</span> compteur <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-4"><a href="" aria-label="4"></a><span class="dt">int64_t</span> my_alloc<span class="op">(</span><span class="dt">int64_t</span> size<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb20-5"><a href="" aria-label="5"></a><span class="dt">void</span> my_free<span class="op">(</span><span class="dt">int64_t</span> num<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb20-6"><a href="" aria-label="6"></a><span class="dt">int64_t</span> set_values<span class="op">(</span><span class="dt">int64_t</span> size<span class="op">,</span> <span class="dt">int64_t</span> num<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span> val<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb20-7"><a href="" aria-label="7"></a><span class="dt">int64_t</span> get_values<span class="op">(</span><span class="dt">int64_t</span> size<span class="op">,</span> <span class="dt">int64_t</span> num<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span> val<span class="op">)</span> <span class="op">{...}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>après la compilation <code>gcc -fPIC --shared -o liballoc.so alloc.c</code></li>
+</ul>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>nm -D liballoc.so</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-filename="nm -D liballoc.so"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="" aria-label="1"></a> <span class="ex">0000000000004060</span> B compteur</span>
+<span id="cb21-2"><a href="" aria-label="2"></a> <span class="ex">0000000000001250</span> T get_values</span>
+<span id="cb21-3"><a href="" aria-label="3"></a> <span class="ex">0000000000001129</span> T my_alloc</span>
+<span id="cb21-4"><a href="" aria-label="4"></a> <span class="ex">00000000000011a6</span> T my_free</span>
+<span id="cb21-5"><a href="" aria-label="5"></a> <span class="ex">00000000000011f3</span> T set_values</span>
+<span id="cb21-6"><a href="" aria-label="6"></a> <span class="ex">0000000000004040</span> B table</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="dlopen-et-dlsym" class="slide level2">
+<h2><code>dlopen</code> et <code>dlsym</code></h2>
+<ul>
+<li><p>Grâce à l’appel système <code>dlsym</code>, on peut associer une adresse à un symbole</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>alloc_table.jl</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" data-filename="alloc_table.jl" data-code-fold="true"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="" aria-label="1"></a><span class="im">using</span> <span class="bu">Libdl</span>: dlopen, dlsym</span>
+<span id="cb22-2"><a href="" aria-label="2"></a>lib_alloc <span class="op">=</span> <span class="fu">dlopen</span>(<span class="st">"./liballoc.so"</span>)</span>
+<span id="cb22-3"><a href="" aria-label="3"></a>all_ptr, fre_ptr, set_ptr, get_ptr <span class="op">=</span> <span class="fu">map</span>(<span class="fu">x-&gt;dlsym</span>(lib_alloc, x), [<span class="op">:</span>my_alloc, <span class="op">:</span>my_free, <span class="op">:</span>set_values, <span class="op">:</span>get_values])</span>
+<span id="cb22-4"><a href="" aria-label="4"></a></span>
+<span id="cb22-5"><a href="" aria-label="5"></a><span class="kw">function</span> <span class="fu">alloc</span>(n<span class="op">::</span><span class="dt">Int</span>)</span>
+<span id="cb22-6"><a href="" aria-label="6"></a>    ret <span class="op">=</span> <span class="fu">ccall</span>(all_ptr, <span class="dt">Int64</span>, (<span class="dt">Int64</span>, ), n)</span>
+<span id="cb22-7"><a href="" aria-label="7"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+valable sur les systèmes POSIX 🢣 pas de compatibilité garantie avec les DLLs windows
+</div>
+</div>
+</div></li>
+<li><p>À vous de jouer :</p>
+<ul>
+<li>ajouter les <code>ccall</code> pour <code>set_values</code>, <code>get_values</code>, <code>my_free</code> dans <code>alloc.jl</code></li>
+<li>à l’aide de cette mini-IPA : allouer une zone mémoire, écrire dedans et récupèrer les valeurs</li>
+<li>note : une version Fortran <code>alloc.f90</code> est aussi disponible pour les ceusses qui veulent</li>
+</ul></li>
+</ul>
+</section>
+<section id="libc" class="slide level2">
+<h2>Libc</h2>
+<ul>
+<li>La bibliothèque standard du C est présente par défaut en Julia sous le nom <code>Libc</code>. On peut donc l’appeler directement comme dans les appels suivants</li>
+</ul>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>rand</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" data-filename="rand"><pre class="sourceCode numberSource Julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb23-1"><a href="" aria-label="1"></a>julia<span class="op">&gt;</span> <span class="fu">Float64</span>(<span class="fu">convert</span>(<span class="dt">Cint</span>,<span class="bu">Libc</span>.<span class="fu">rand</span>())<span class="op">/</span><span class="fl">2147483647</span>)</span>
+<span id="cb23-2"><a href="" aria-label="2"></a><span class="fl">0.6183668312702173</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>printf</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24" data-filename="printf"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href="" aria-label="1"></a>julia<span class="op">&gt;</span> <span class="fu">ccall</span>(<span class="op">:</span>printf, Cvoid, (<span class="dt">Cstring</span>,), <span class="st">"hoho</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb24-2"><a href="" aria-label="2"></a>hoho</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section>
+<section>
+<section id="gestion-de-la-mémoire" class="title-slide slide level1 center">
+<h1>Gestion de la mémoire</h1>
+<ul>
+<li>On peut exposer de la mémoire allouée coté C/Fortran directement en Julia grâce à</li>
+</ul>
+<div title="unsage_wrap">
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>unsage_wrap</strong></p>
+</div>
+<div class="callout-content">
+<p><code>unsafe_wrap(Array, pointer::Ptr{T}, dims; own = false)</code></p>
+<p>Wrap a Julia Array object around the data at the address given by pointer, without making a copy. The pointer element type T determines the array element type. <code>dims</code> is either an integer (for a 1d array) or a tuple of the array dimensions. own optionally specifies whether Julia should take ownership of the memory, calling free on the pointer when the array is no longer referenced.</p>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>À vous de jouer : réécrire <code>alloc.c</code> et <code>alloc.jl</code> pour renvoyer directement des tableaux en Julia, plus besoin de <code>get_values</code> et <code>set_values</code></li>
+</ul>
+</section>
+<section id="gestion-de-la-mémoire-1" class="slide level2">
+<h2>gestion de la mémoire</h2>
+<ul>
+<li>On dispose d’autres fonctions pour gérer la mémoire
+<ul>
+<li><code>pointer(x)</code> : recupère l’adresse d’un objet</li>
+<li><code>unsafe_store!(p, val, ind)</code> 🢣 <code>p[ind] = val</code></li>
+<li><code>unsafe_load(p, ind)</code> : renvoies <code>p[ind]</code></li>
+</ul></li>
+<li>exemple</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="" aria-label="1"></a><span class="ex">julia</span><span class="op">&gt;</span> z = unsafe_wrap<span class="er">(</span><span class="ex">Array,</span> convert<span class="er">(</span><span class="ex">Ptr{Int32},Libc.calloc</span><span class="er">(</span><span class="ex">3,</span> 4<span class="kw">))</span><span class="ex">,</span> <span class="er">(</span><span class="ex">1,3</span><span class="kw">))</span></span>
+<span id="cb25-2"><a href="" aria-label="2"></a><span class="ex">1×3</span> Matrix{Int32}:</span>
+<span id="cb25-3"><a href="" aria-label="3"></a> <span class="ex">0</span>  0  0</span>
+<span id="cb25-4"><a href="" aria-label="4"></a></span>
+<span id="cb25-5"><a href="" aria-label="5"></a><span class="ex">julia</span><span class="op">&gt;</span> z<span class="pp">[</span><span class="ss">1:2</span><span class="pp">]</span> = [3, 2]<span class="kw">;</span></span>
+<span id="cb25-6"><a href="" aria-label="6"></a></span>
+<span id="cb25-7"><a href="" aria-label="7"></a><span class="ex">julia</span><span class="op">&gt;</span> unsafe_load<span class="er">(</span><span class="ex">pointer</span><span class="er">(</span><span class="ex">z</span><span class="kw">)</span><span class="ex">,</span> 1<span class="kw">)</span></span>
+<span id="cb25-8"><a href="" aria-label="8"></a><span class="ex">3</span></span>
+<span id="cb25-9"><a href="" aria-label="9"></a></span>
+<span id="cb25-10"><a href="" aria-label="10"></a><span class="ex">julia</span><span class="op">&gt;</span> unsafe_store<span class="pp">!(</span>pointer(z<span class="pp">)</span>, 1, 3<span class="er">)</span></span>
+<span id="cb25-11"><a href="" aria-label="11"></a><span class="ex">Ptr{Int32}</span> @0x0000000034420660</span>
+<span id="cb25-12"><a href="" aria-label="12"></a></span>
+<span id="cb25-13"><a href="" aria-label="13"></a><span class="ex">julia</span><span class="op">&gt;</span> z</span>
+<span id="cb25-14"><a href="" aria-label="14"></a><span class="ex">1×3</span> Matrix{Int32}:</span>
+<span id="cb25-15"><a href="" aria-label="15"></a> <span class="ex">3</span>  2  1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section></section>
+<section>
+<section id="déverminage-a-la-mac-gyver" class="title-slide slide level1 center">
+<h1>déverminage : <em>a la Mac Gyver</em></h1>
+<div title="Ajouter `printf/print` dans le code">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Ajouter <code>printf/print</code> dans le code</strong></p>
+</div>
+<div class="callout-content">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>truc.c</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" data-filename="truc.c"><pre class="sourceCode numberSource C number-lines code-with-copy"><code class="sourceCode c"><span id="cb26-1"><a href="" aria-label="1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb26-2"><a href="" aria-label="2"></a><span class="dt">void</span> truc<span class="op">(</span><span class="dt">int</span> <span class="op">*</span> x<span class="op">)</span> <span class="op">{</span> <span class="op">*</span>x <span class="op">+=</span> <span class="dv">2</span><span class="op">;</span> printf<span class="op">(</span><span class="st">"</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> x<span class="op">);</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>truc.jl</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27" data-filename="truc.jl"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb27-1"><a href="" aria-label="1"></a>z<span class="op">=</span> <span class="fu">Ref</span>(<span class="fu">Int32</span>(<span class="fl">0.0</span>))</span>
+<span id="cb27-2"><a href="" aria-label="2"></a><span class="fu">ccall</span>((<span class="op">:</span>truc, <span class="st">"./libtruc.so"</span>), Cvoid, (<span class="dt">Ref</span>{<span class="dt">Int32</span>},), z) <span class="co"># 🫠 : pas d'affichage</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>car <code>stdout</code> est inaccessible</p>
+</div>
+</div>
+</div>
+</div>
+<div title="passer un descripteur de fichier">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>passer un descripteur de fichier</strong></p>
+</div>
+<div class="callout-content">
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>truc_desc.c</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" data-filename="truc_desc.c"><pre class="sourceCode numberSource C number-lines code-with-copy"><code class="sourceCode c"><span id="cb28-1"><a href="" aria-label="1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb28-2"><a href="" aria-label="2"></a><span class="dt">void</span> truc<span class="op">(</span><span class="dt">int</span> <span class="op">*</span> x<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">)</span> <span class="op">{</span> <span class="op">*</span>x <span class="op">+=</span> <span class="dv">2</span><span class="op">;</span> fprintf<span class="op">(</span>fp<span class="op">,</span> <span class="st">"</span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> x<span class="op">);</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>truc_desc.jl</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29" data-filename="truc_desc.jl"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb29-1"><a href="" aria-label="1"></a>z<span class="op">=</span> <span class="fu">Ref</span>(<span class="fu">Int32</span>(<span class="fl">0.0</span>))</span>
+<span id="cb29-2"><a href="" aria-label="2"></a><span class="fu">ccall</span>((<span class="op">:</span>truc, <span class="st">"./libtruc_desc.so"</span>), Cvoid, (<span class="dt">Ref</span>{<span class="dt">Int32</span>}, <span class="dt">Ptr</span>{Cvoid}), z, <span class="bu">Libc</span>.<span class="fu">FILE</span>(<span class="bu">Libc</span>.<span class="fu">RawFD</span>(<span class="fl">1</span>), <span class="st">"w"</span>) ) <span class="co"># 👍</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="déverminage-gdb" class="slide level2">
+<h2>déverminage : GDB</h2>
+<ul>
+<li>On recompile <code>truc.c</code> avec les symboles de déverminage (<code>-g</code>)</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" title="recompile avec -g"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="" aria-label="1"></a><span class="fu">gcc</span> <span class="at">--shared</span> <span class="at">-o</span> libtruc.so <span class="at">-g</span> truc.c</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>on lance ensuite <code>GNU gdb</code></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource gdb number-lines code-with-copy"><code class="sourceCode"><span id="cb31-1"><a href="" aria-label="1"></a>(gdb) file julia</span>
+<span id="cb31-2"><a href="" aria-label="2"></a>(gdb) set args -L truc.jl</span>
+<span id="cb31-3"><a href="" aria-label="3"></a>(gdb) set breakpoint pending on</span>
+<span id="cb31-4"><a href="" aria-label="4"></a>(gdb) b truc</span>
+<span id="cb31-5"><a href="" aria-label="5"></a>❌️ Function "truc" not defined.</span>
+<span id="cb31-6"><a href="" aria-label="6"></a>Breakpoint 1 (truc) pending.</span>
+<span id="cb31-7"><a href="" aria-label="7"></a>(gdb) run</span>
+<span id="cb31-8"><a href="" aria-label="8"></a>(...)</span>
+<span id="cb31-9"><a href="" aria-label="9"></a>Enable debuginfod for this session? (y or [n]) n</span>
+<span id="cb31-10"><a href="" aria-label="10"></a>Thread 1 "julia" hit Breakpoint 1, truc (x=0x7fffed2431a0) at truc.c:3</span>
+<span id="cb31-11"><a href="" aria-label="11"></a>3     *x += 2;</span>
+<span id="cb31-12"><a href="" aria-label="12"></a>(gdb) p *x</span>
+<span id="cb31-13"><a href="" aria-label="13"></a>$1 = 0</span>
+<span id="cb31-14"><a href="" aria-label="14"></a>(gdb) n</span>
+<span id="cb31-15"><a href="" aria-label="15"></a>4     printf("%d", x);</span>
+<span id="cb31-16"><a href="" aria-label="16"></a>(gdb) p *x</span>
+<span id="cb31-17"><a href="" aria-label="17"></a>$2 = 2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>on peut aussi faire <code>gdb -p $(pgrep julia)</code> mais il faut désactiver <code>/proc/sys/kernel/yama/ptrace_scope</code></li>
+</ul>
+</section></section>
+<section>
+<section id="appel-de-fonctions-julia-c" class="title-slide slide level1 center">
+<h1>appel de fonctions Julia (C)</h1>
+<ul>
+<li><code>@cfunction</code> génère une un pointeur de fonction appelable depuis le C/Fortran</li>
+<li>exemple</li>
+</ul>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>apply_f.c</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32" data-filename="apply_f.c"><pre class="sourceCode numberSource C number-lines code-with-copy"><code class="sourceCode c"><span id="cb32-1"><a href="" aria-label="1"></a><span class="pp">#include </span><span class="im">&lt;inttypes.h&gt;</span></span>
+<span id="cb32-2"><a href="" aria-label="2"></a><span class="dt">double</span> apply_f<span class="op">(</span><span class="dt">double</span> <span class="op">(*</span>fun<span class="op">)(</span><span class="dt">double</span><span class="op">),</span> <span class="dt">int64_t</span> x_n <span class="op">,</span> <span class="dt">double</span> <span class="op">*</span>x<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span> y<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb32-3"><a href="" aria-label="3"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int64_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x_n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb32-4"><a href="" aria-label="4"></a>      i<span class="op">[</span>y<span class="op">]</span> <span class="op">=</span> <span class="op">(*</span>fun<span class="op">)(</span>i<span class="op">[</span>x<span class="op">]);</span></span>
+<span id="cb32-5"><a href="" aria-label="5"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>apply_f.jl</strong></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33" data-filename="apply_f.jl"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb33-1"><a href="" aria-label="1"></a>a <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">1</span>.<span class="op">:</span><span class="fl">10</span>.)</span>
+<span id="cb33-2"><a href="" aria-label="2"></a>fun <span class="op">=</span> <span class="pp">@cfunction</span>(x<span class="op">-&gt;</span>x<span class="op">*</span>x, <span class="dt">Float64</span>, (<span class="dt">Float64</span>,))</span>
+<span id="cb33-3"><a href="" aria-label="3"></a>b <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">10</span>)</span>
+<span id="cb33-4"><a href="" aria-label="4"></a>s <span class="op">=</span> <span class="fu">ccall</span>((<span class="op">:</span>apply_f, <span class="st">"libjuliafun.so"</span>), Cvoid, (<span class="dt">Ptr</span>{Cvoid}, <span class="dt">Cint</span>, <span class="dt">Ptr</span>{<span class="dt">Cdouble</span>}, <span class="dt">Ptr</span>{<span class="dt">Cdouble</span>}), fun, <span class="fl">10</span>, a, b)</span>
+<span id="cb33-5"><a href="" aria-label="5"></a><span class="fu">println</span>(<span class="st">"b = </span><span class="sc">$</span>b<span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="exercice" class="slide level2">
+<h2>exercice :</h2>
+<ul>
+<li>Écrire une fonction C/Fortran et son appel en Julia qui prend en arguments
+<ul>
+<li>un vecteur <span class="math inline">\(v\)</span> de <code>Float64</code></li>
+<li>une valeur initiale <span class="math inline">\(c_0\)</span></li>
+<li>un opérateur binaire <span class="math inline">\(op\)</span></li>
+<li>une fonction unaire <span class="math inline">\(f\)</span></li>
+</ul></li>
+<li>et qui calcule <span class="math display">\[op(op(op(c_0, f(v[1]), f(v[2]), ..., f(v[end]))))\]</span></li>
+<li>et vérifier que pour le 4-uplet <span class="math inline">\(([1.:10;],0,+,.²)\)</span> on obtient bien 385.0!</li>
+</ul>
+</section></section>
+<section>
+<section id="et-la-portabilité-diable" class="title-slide slide level1 center">
+<h1>Et la portabilité, diable !</h1>
+<ul>
+<li>hypothèse du TP : système POSIX avec outils GNU</li>
+<li>Comment généralise-t-on à d’autres OS/compilos ? <span class="emoji" data-emoji="thinking">🤔</span></li>
+<li>Faciliter le déploiement</li>
+<li>écosystème binaire de Julia :
+<ul>
+<li><a href="https://binarybuilder.org/">BinaryBuilder.jl</a> : paquet de compilation croisée</li>
+<li>RootFS : systeme basé sur une image docker Alpine</li>
+<li><a href="https://github.com/JuliaBinaryWrappers/">JuliaBinaryWrappers</a> : autogénération de paquets binaires du genre <code>mon_paquet_jll.jl</code></li>
+<li><a href="https://github.com/JuliaPackaging/Yggdrasil">Yggdrasil</a> : forge de compilation binaire</li>
+</ul></li>
+</ul>
+</section>
+<section id="schéma-générique" class="slide level2">
+<h2>schéma générique</h2>
+<p><img data-src="fig/ecosysteme_yggdrasil.svg">{fig-align=“center”, width=400}</p>
+</section>
+<section id="binarybuilder.jl" class="slide level2">
+<h2>BinaryBuilder.jl</h2>
+<ol type="1">
+<li><p>cours magicien, cours! <span class="emoji" data-emoji="wink">😉</span></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="" aria-label="1"></a><span class="ex">julia</span><span class="op">&gt;</span> using BinaryBuilder</span>
+<span id="cb34-2"><a href="" aria-label="2"></a><span class="ex">julia</span><span class="op">&gt;</span> BinaryBuilder.run_wizard<span class="er">(</span><span class="kw">)</span></span>
+<span id="cb34-3"><a href="" aria-label="3"></a></span>
+<span id="cb34-4"><a href="" aria-label="4"></a>    <span class="ex">o</span>      <span class="kw">`</span><span class="bu">.</span></span>
+<span id="cb34-5"><a href="" aria-label="5"></a>   <span class="ex">o*o</span>      <span class="dt">\'</span>-_               00000000: 01111111  .</span>
+<span id="cb34-6"><a href="" aria-label="6"></a>     <span class="ex">\\</span>      <span class="dt">\;</span><span class="st">""</span>.     ,<span class="kw">;</span><span class="ex">.--*</span>  00000001: 01000101  E</span>
+<span id="cb34-7"><a href="" aria-label="7"></a>      <span class="ex">\\</span>     ,<span class="dt">\'</span><span class="st">'--.--'</span>/       00000002: 01001100  L</span>
+<span id="cb34-8"><a href="" aria-label="8"></a>      <span class="bu">:</span>=<span class="dt">\-</span>-<span class="op">&lt;</span><span class="st">' `""  _   |       00000003: 01000110  F</span></span>
+<span id="cb34-9"><a href="" aria-label="9"></a><span class="st">      ||\\     `" / ''--       00000004: 00000010  .</span></span>
+<span id="cb34-10"><a href="" aria-label="10"></a><span class="st">      `/_\\,-|    |            00000005: 00000001  .</span></span>
+<span id="cb34-11"><a href="" aria-label="11"></a><span class="st">          \\/     L</span></span>
+<span id="cb34-12"><a href="" aria-label="12"></a><span class="st">           \\ ,'</span>   <span class="dt">\</span></span>
+<span id="cb34-13"><a href="" aria-label="13"></a>         _/ L<span class="st">'   `  \          Join us in the #binarybuilder channel on the</span></span>
+<span id="cb34-14"><a href="" aria-label="14"></a><span class="st">        /  /    /   /          community slack: https://julialang.org/slack/</span></span>
+<span id="cb34-15"><a href="" aria-label="15"></a><span class="st">       /  /    |    \</span></span>
+<span id="cb34-16"><a href="" aria-label="16"></a><span class="st">      "_''--_-''---__=;        https://github.com/JuliaPackaging/BinaryBuilder.jl</span></span>
+<span id="cb34-17"><a href="" aria-label="17"></a></span>
+<span id="cb34-18"><a href="" aria-label="18"></a><span class="st">(...)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>télécharge les compilos et préconfigure certaines choses</li>
+<li><span class="emoji" data-emoji="hand">✋</span> prend énornément de place !</li>
+</ul></li>
+<li><p>ou partir d’un <code>build_tarballs.jl</code> et l’adapter <em>a la mano</em></p></li>
+</ol>
+</section>
+<section id="exemple-de-build_tarballs.jl" class="slide level2">
+<h2>exemple de <code>build_tarballs.jl</code></h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb35-1"><a href="" aria-label="1"></a><span class="im">using</span> <span class="bu">BinaryBuilder</span></span>
+<span id="cb35-2"><a href="" aria-label="2"></a>name <span class="op">=</span> <span class="st">"libfoo"</span></span>
+<span id="cb35-3"><a href="" aria-label="3"></a>version <span class="op">=</span> <span class="st">v"1.0.1"</span></span>
+<span id="cb35-4"><a href="" aria-label="4"></a>sources <span class="op">=</span> [</span>
+<span id="cb35-5"><a href="" aria-label="5"></a>    <span class="fu">ArchiveSource</span>(<span class="st">"&lt;url to source tarball&gt;"</span>, <span class="st">"sha256 hash"</span>),</span>
+<span id="cb35-6"><a href="" aria-label="6"></a>]</span>
+<span id="cb35-7"><a href="" aria-label="7"></a></span>
+<span id="cb35-8"><a href="" aria-label="8"></a>script <span class="op">=</span> <span class="st">raw"""</span></span>
+<span id="cb35-9"><a href="" aria-label="9"></a><span class="st">cd ${WORKSPACE}/srcdir/libfoo-*</span></span>
+<span id="cb35-10"><a href="" aria-label="10"></a><span class="st">make -j${nproc}</span></span>
+<span id="cb35-11"><a href="" aria-label="11"></a><span class="st">make install</span></span>
+<span id="cb35-12"><a href="" aria-label="12"></a><span class="st">"""</span></span>
+<span id="cb35-13"><a href="" aria-label="13"></a></span>
+<span id="cb35-14"><a href="" aria-label="14"></a>platforms <span class="op">=</span> <span class="fu">supported_platforms</span>()</span>
+<span id="cb35-15"><a href="" aria-label="15"></a></span>
+<span id="cb35-16"><a href="" aria-label="16"></a>products <span class="op">=</span> [</span>
+<span id="cb35-17"><a href="" aria-label="17"></a>    <span class="fu">LibraryProduct</span>(<span class="st">"libfoo"</span>, <span class="op">:</span>libfoo),</span>
+<span id="cb35-18"><a href="" aria-label="18"></a>    <span class="fu">ExecutableProduct</span>(<span class="st">"fooifier"</span>, <span class="op">:</span>fooifier),</span>
+<span id="cb35-19"><a href="" aria-label="19"></a>]</span>
+<span id="cb35-20"><a href="" aria-label="20"></a></span>
+<span id="cb35-21"><a href="" aria-label="21"></a>dependencies <span class="op">=</span> [ <span class="fu">Dependency</span>(<span class="st">"Zlib_jll"</span>), ] </span>
+<span id="cb35-22"><a href="" aria-label="22"></a><span class="fu">build_tarballs</span>(<span class="cn">ARGS</span>, name, version, sources, script, platforms, products, dependencies)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="éléments-du-build_tarballs.jl" class="slide level2">
+<h2>éléments du <code>build_tarballs.jl</code></h2>
+<ol type="1">
+<li><p><code>sources</code> : origine des sources</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb36-1"><a href="" aria-label="1"></a>sources <span class="op">=</span> [ <span class="fu">GitSource</span>(<span class="st">"https://gitlab.inria.fr/fuentes/n2qn1.git"</span>, </span>
+<span id="cb36-2"><a href="" aria-label="2"></a><span class="st">"a3b6c2cf8d429591976f5e33c0c9766b1e8fea05"</span>) ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>peut être du type <code>GitSource</code>, <code>ArchiveSource</code>, <code>DirectorySource</code> ou <code>FileSource</code></p></li>
+<li><p><code>script</code> : chaîne multilignes contenant le script de compilation. Fait souvent appel à <code>Make</code> ou <code>CMake</code></p></li>
+<li><p><code>platforms</code> : tableaux des plateformes cibles de compilation. Disponible à l’aide de <code>supported_platforms</code></p></li>
+<li><p><code>products</code> : résultats de compils, à archiver dans le paquet binaire. La plupart du temps des bibliothèques</p></li>
+<li><p><code>dependencies</code> : autres paquets Julia dont on peut dépendre</p></li>
+</ol>
+</section>
+<section id="exercice-recette-pour-alloc" class="slide level2">
+<h2>exercice : recette pour alloc</h2>
+<ol type="1">
+<li><p>copier <code>alloc.c</code> et/ou <code>alloc.f90</code> dans un sous-repertoire</p></li>
+<li><p><code>sources</code> <span class="math inline">\(\Rightarrow\)</span> utiliser <code>DirectorySource</code> sur le sous-répertoire</p></li>
+<li><p>ajouter dans le sous répertoire le <code>CMakeLists.txt</code> suivant</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource cmake number-lines code-with-copy"><code class="sourceCode cmake"><span id="cb37-1"><a href="" aria-label="1"></a><span class="kw">cmake_minimum_required</span>(<span class="ot">VERSION</span> <span class="dt">3.17</span>)</span>
+<span id="cb37-2"><a href="" aria-label="2"></a><span class="kw">project</span>(libAlloc <span class="ot">LANGUAGES</span> <span class="ot">Fortran</span> <span class="ot">C</span>)</span>
+<span id="cb37-3"><a href="" aria-label="3"></a><span class="kw">add_library</span>(<span class="bn">alloc</span> <span class="ot">SHARED</span> alloc.c)</span>
+<span id="cb37-4"><a href="" aria-label="4"></a><span class="kw">add_library</span>(<span class="bn">alloc_f</span> <span class="ot">SHARED</span> alloc.f90)</span>
+<span id="cb37-5"><a href="" aria-label="5"></a><span class="kw">install</span>(<span class="ot">TARGETS</span> <span class="bn">alloc_f</span> <span class="bn">alloc</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><code>script</code> : utiliser le script suivant</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb38-1"><a href="" aria-label="1"></a>script <span class="op">=</span> <span class="st">raw"""</span></span>
+<span id="cb38-2"><a href="" aria-label="2"></a><span class="st">cd ${WORKSPACE}/srcdir/</span></span>
+<span id="cb38-3"><a href="" aria-label="3"></a><span class="st">cmake -B build -DCMAKE_INSTALL_PREFIX=${prefix} -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \</span></span>
+<span id="cb38-4"><a href="" aria-label="4"></a><span class="st">               -DCMAKE_BUILD_TYPE=Release</span></span>
+<span id="cb38-5"><a href="" aria-label="5"></a><span class="st">cmake --build build </span></span>
+<span id="cb38-6"><a href="" aria-label="6"></a><span class="st">cmake --install build</span></span>
+<span id="cb38-7"><a href="" aria-label="7"></a><span class="st">install_license ${WORKSPACE}/srcdir/LICENSE</span></span>
+<span id="cb38-8"><a href="" aria-label="8"></a><span class="st">"""</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>ajouter un fichier de licence dans le sous-répertoire</p></li>
+</ol>
+</section>
+<section id="exercice-suite" class="slide level2">
+<h2>Exercice (suite)</h2>
+<ol start="5" type="1">
+<li><p><code>platforms</code> : se limiter à linux avec <code>libc="glibc"</code> et utiliser</p></li>
+<li><p><code>products</code> : selectionner <code>liballoc</code> et/ou <code>liballoc_f</code></p></li>
+<li><p><code>dependencies</code> : commencer par des dépendances vides <code>=[]</code> et rajouter la dépendance suggerée par Julia</p></li>
+<li><p>lancer la compil avec <code>julia build_tarballs.jl --deploy=local</code></p></li>
+</ol>
+<div title="Avis à la population">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Avis à la population</strong></p>
+</div>
+<div class="callout-content">
+<p>N’essayer pas sur Arctic, vous manqueriez de privilèges spéciaux pour utiliser RootFs</p>
+</div>
+</div>
+</div>
+</div>
+<div title="copier une recette">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>copier une recette</strong></p>
+</div>
+<div class="callout-content">
+<p>Vous pouvez vous inspirer de la recette pour <a href="https://github.com/JuliaPackaging/Yggdrasil/blob/master/N/N2QN1/build_tarballs.jl">N2QN1</a></p>
+</div>
+</div>
+</div>
+</div>
+<ol start="9" type="1">
+<li>Pour les téméraires : remplacer l’appel à CMake par un appel direct a Make</li>
+</ol>
+</section></section>
+<section>
+<section id="clang.jl" class="title-slide slide level1 center">
+<h1><a href="https://github.com/JuliaInterop/Clang.jl">Clang.jl</a></h1>
+<ul>
+<li><p>Clang en tant que compilateur possède un analyseur syntaxique avec une API</p></li>
+<li><p>Clang.jl l’utilise pour générer des interfaces</p></li>
+<li><p>exemple : <code>MPI.jl</code> contient un fichier MPIGenerator.jl</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb39-1"><a href="" aria-label="1"></a>(<span class="op">...</span>)</span>
+<span id="cb39-2"><a href="" aria-label="2"></a><span class="fu">signatures</span>() <span class="op">=</span> <span class="cf">begin</span></span>
+<span id="cb39-3"><a href="" aria-label="3"></a>  (<span class="op">...</span>)</span>
+<span id="cb39-4"><a href="" aria-label="4"></a>  include_dir <span class="op">=</span> <span class="fu">normpath</span>(artifact_dir, <span class="st">"include"</span>)</span>
+<span id="cb39-5"><a href="" aria-label="5"></a>  args <span class="op">=</span> <span class="fu">vcat</span>(<span class="fu">get_default_args</span>(), <span class="st">"-I</span><span class="sc">$</span>include_dir<span class="st">"</span>)  <span class="co"># add compiler flags</span></span>
+<span id="cb39-6"><a href="" aria-label="6"></a>  headers <span class="op">=</span> <span class="cf">if</span> MPIPreferences.binary <span class="op">==</span> <span class="st">"MPICH_jll"</span></span>
+<span id="cb39-7"><a href="" aria-label="7"></a>      <span class="fu">push!</span>(args, <span class="st">"-include</span><span class="sc">$</span>include_dir<span class="st">/mpi.h"</span>)</span>
+<span id="cb39-8"><a href="" aria-label="8"></a>      <span class="fu">joinpath</span>(include_dir, <span class="st">"mpi_proto.h"</span>)</span>
+<span id="cb39-9"><a href="" aria-label="9"></a>  <span class="cf">elseif</span> MPIPreferences.binary <span class="op">==</span> <span class="st">"OpenMPI_jll"</span></span>
+<span id="cb39-10"><a href="" aria-label="10"></a>      <span class="fu">joinpath</span>(include_dir, <span class="st">"mpi.h"</span>)</span>
+<span id="cb39-11"><a href="" aria-label="11"></a>  <span class="cf">end</span></span>
+<span id="cb39-12"><a href="" aria-label="12"></a>  ctx <span class="op">=</span> <span class="fu">create_context</span>(headers, args, options)</span>
+<span id="cb39-13"><a href="" aria-label="13"></a>  <span class="fu">build!</span>(ctx)  <span class="co"># run generator</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul>
+</section>
+<section id="exercice-interface-de-alloc.c" class="slide level2">
+<h2>exercice : interface de <code>alloc.c</code></h2>
+<ol type="1">
+<li><p>écrire <code>alloc.h</code> à partir de <code>alloc.c</code> (retenir les declarations)</p></li>
+<li><p>créer un fichier <code>generator.toml</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode numberSource toml number-lines code-with-copy"><code class="sourceCode toml"><span id="cb40-1"><a href="" aria-label="1"></a><span class="kw">[general]</span></span>
+<span id="cb40-2"><a href="" aria-label="2"></a><span class="dt">library_name</span> <span class="op">=</span> <span class="st">"liballoc"</span></span>
+<span id="cb40-3"><a href="" aria-label="3"></a><span class="dt">output_file_path</span> <span class="op">=</span> <span class="st">"./Liballoc.jl"</span></span>
+<span id="cb40-4"><a href="" aria-label="4"></a><span class="dt">module_name</span> <span class="op">=</span> <span class="st">"Liballoc"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>créer le script <code>generator.jl</code></p></li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb41-1"><a href="" aria-label="1"></a><span class="im">using</span> <span class="bu">Clang.Generators</span></span>
+<span id="cb41-2"><a href="" aria-label="2"></a><span class="fu">cd</span>(<span class="pp">@__DIR__</span>)</span>
+<span id="cb41-3"><a href="" aria-label="3"></a>include_dir <span class="op">=</span> <span class="fu">pwd</span>() <span class="co"># ou le chemin absolu, nahi duzuen bezala !</span></span>
+<span id="cb41-4"><a href="" aria-label="4"></a>options <span class="op">=</span> <span class="fu">load_options</span>(<span class="fu">joinpath</span>(<span class="pp">@__DIR__</span>, <span class="st">"generator.toml"</span>))</span>
+<span id="cb41-5"><a href="" aria-label="5"></a>args <span class="op">=</span> <span class="fu">get_default_args</span>() </span>
+<span id="cb41-6"><a href="" aria-label="6"></a><span class="fu">push!</span>(args, <span class="st">"-I</span><span class="sc">$</span>include_dir<span class="st">"</span>)</span>
+<span id="cb41-7"><a href="" aria-label="7"></a>headers <span class="op">=</span> [ <span class="fu">joinpath</span>(include_dir, <span class="st">"alloc.h"</span>)]</span>
+<span id="cb41-8"><a href="" aria-label="8"></a>ctx <span class="op">=</span> <span class="fu">create_context</span>(headers, args, options)</span>
+<span id="cb41-9"><a href="" aria-label="9"></a><span class="fu">build!</span>(ctx)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="4" type="1">
+<li>exécuter <code>generator.jl</code></li>
+<li>comparer le résultat avec votre fichier d’interface précédent</li>
+</ol>
+</section></section>
+<section>
+<section id="appeler-du-python" class="title-slide slide level1 center">
+<h1>appeler du Python</h1>
+<ul>
+<li><p><code>PyCall.jl</code> : permey d’appeler directement du Python</p></li>
+<li><p>exemple : <code>PyPlot.jl</code> utilise <code>PyCall.jl</code></p></li>
+<li><p>import d’un symbole Python au moyen de <code>@pyimport</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb42-1"><a href="" aria-label="1"></a>julia<span class="op">&gt;</span> <span class="im">using</span> <span class="bu">PyCall</span></span>
+<span id="cb42-2"><a href="" aria-label="2"></a>julia<span class="op">&gt;</span> <span class="pp">@pyimport</span> numpy</span>
+<span id="cb42-3"><a href="" aria-label="3"></a>julia<span class="op">&gt;</span> a <span class="op">=</span> <span class="fu">transpose</span>(numpy.<span class="fu">arange</span>(<span class="fl">5</span>))</span>
+<span id="cb42-4"><a href="" aria-label="4"></a><span class="fl">1</span><span class="op">×</span><span class="fl">5</span> <span class="fu">transpose</span>(<span class="op">::</span><span class="dt">Vector{Int64}</span>) with eltype <span class="dt">Int64</span><span class="op">:</span></span>
+<span id="cb42-5"><a href="" aria-label="5"></a> <span class="fl">0</span>  <span class="fl">1</span>  <span class="fl">2</span>  <span class="fl">3</span>  <span class="fl">4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>configuration</p>
+<div title="Config : choisir son Python">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Config : choisir son Python</strong></p>
+</div>
+<div class="callout-content">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb43-1"><a href="" aria-label="1"></a><span class="cn">ENV</span>[<span class="st">"PYTHON"</span>] <span class="op">=</span> <span class="st">"... path of the python executable ..."</span></span>
+<span id="cb43-2"><a href="" aria-label="2"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
+<span id="cb43-3"><a href="" aria-label="3"></a><span class="bu">Pkg</span>.<span class="fu">build</span>(<span class="st">"PyCall"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div></li>
+</ul>
+</section>
+<section id="exemple-avec-vtk" class="slide level2">
+<h2>exemple avec VTK</h2>
+<ul>
+<li><p>on souhaite lire le maillage VTK non-structuré suivant</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="" aria-label="1"></a><span class="ex">%&nbsp;cat</span> twoTriangles.vtk</span>
+<span id="cb44-2"><a href="" aria-label="2"></a><span class="co"># vtk DataFile Version 1.0</span></span>
+<span id="cb44-3"><a href="" aria-label="3"></a><span class="ex">two</span> triangles</span>
+<span id="cb44-4"><a href="" aria-label="4"></a><span class="ex">ASCII</span></span>
+<span id="cb44-5"><a href="" aria-label="5"></a><span class="ex">DATASET</span> UNSTRUCTURED_GRID</span>
+<span id="cb44-6"><a href="" aria-label="6"></a><span class="ex">POINTS</span> 4 double</span>
+<span id="cb44-7"><a href="" aria-label="7"></a><span class="ex">0.</span> 0. 0.</span>
+<span id="cb44-8"><a href="" aria-label="8"></a><span class="ex">0.</span> 1. 0.</span>
+<span id="cb44-9"><a href="" aria-label="9"></a><span class="ex">1.</span> 1. 0.</span>
+<span id="cb44-10"><a href="" aria-label="10"></a><span class="ex">1.</span> 0. 0.</span>
+<span id="cb44-11"><a href="" aria-label="11"></a><span class="ex">CELLS</span> 2 8</span>
+<span id="cb44-12"><a href="" aria-label="12"></a><span class="ex">3</span> 0 1 3</span>
+<span id="cb44-13"><a href="" aria-label="13"></a><span class="ex">3</span> 1 2 3</span>
+<span id="cb44-14"><a href="" aria-label="14"></a><span class="ex">CELL_TYPES</span> 2</span>
+<span id="cb44-15"><a href="" aria-label="15"></a><span class="ex">5</span></span>
+<span id="cb44-16"><a href="" aria-label="16"></a><span class="ex">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>afin de le stocker dans la structure</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb45-1"><a href="" aria-label="1"></a><span class="kw">struct</span> Mesh</span>
+<span id="cb45-2"><a href="" aria-label="2"></a>    points<span class="op">::</span><span class="dt">Matrix{Float64}</span></span>
+<span id="cb45-3"><a href="" aria-label="3"></a>    cells<span class="op">::</span><span class="dt">Vector{Vector{Int32}}</span></span>
+<span id="cb45-4"><a href="" aria-label="4"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul>
+</section>
+<section id="python-exemple-2" class="slide level2">
+<h2>python : exemple 2</h2>
+<ul>
+<li>l’interface Python de vtk utilise un “pipeline” représenté sous la forme d’un dictionnaire</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb46-1"><a href="" aria-label="1"></a> <span class="im">using</span> <span class="bu">PyCall</span></span>
+<span id="cb46-2"><a href="" aria-label="2"></a> <span class="pp">@pyimport</span> vtk</span>
+<span id="cb46-3"><a href="" aria-label="3"></a> <span class="kw">function</span> <span class="fu">readMeshFromFileVtk</span>(fileName<span class="op">::</span><span class="dt">String</span>)</span>
+<span id="cb46-4"><a href="" aria-label="4"></a>     reader<span class="op">=</span>vtk.<span class="fu">vtkUnstructuredGridReader</span>()</span>
+<span id="cb46-5"><a href="" aria-label="5"></a>     reader[<span class="st">"SetFileName"</span>](fileName)</span>
+<span id="cb46-6"><a href="" aria-label="6"></a>     reader[<span class="st">"Update"</span>]()</span>
+<span id="cb46-7"><a href="" aria-label="7"></a>     out <span class="op">=</span> reader[<span class="op">:</span>GetOutput]()</span>
+<span id="cb46-8"><a href="" aria-label="8"></a>     pts <span class="op">=</span> out[<span class="op">:</span>GetPoints]()</span>
+<span id="cb46-9"><a href="" aria-label="9"></a>     pointsData <span class="op">=</span> pts[<span class="op">:</span>GetData]()</span>
+<span id="cb46-10"><a href="" aria-label="10"></a>     clls <span class="op">=</span> out[<span class="op">:</span>GetCells]()</span>
+<span id="cb46-11"><a href="" aria-label="11"></a>     cllData <span class="op">=</span> clls[<span class="op">:</span>GetData]()</span>
+<span id="cb46-12"><a href="" aria-label="12"></a>     nbCells <span class="op">=</span> out[<span class="op">:</span>GetNumberOfCells]()</span>
+<span id="cb46-13"><a href="" aria-label="13"></a>     i<span class="op">=</span><span class="fl">1</span> </span>
+<span id="cb46-14"><a href="" aria-label="14"></a>     cellIdx <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb46-15"><a href="" aria-label="15"></a>     cells <span class="op">=</span> <span class="fu">fill</span>(<span class="dt">Int32</span>[], nbCells) </span>
+<span id="cb46-16"><a href="" aria-label="16"></a>     <span class="cf">while</span> i <span class="op">&lt;</span> <span class="fu">length</span>(cllData)</span>
+<span id="cb46-17"><a href="" aria-label="17"></a>          currentCellSize <span class="op">=</span> cllData[i]</span>
+<span id="cb46-18"><a href="" aria-label="18"></a>          cells[cellIdx] <span class="op">=</span> cllData[i<span class="op">+</span><span class="fl">1</span><span class="op">:</span>i<span class="op">+</span>currentCellSize]</span>
+<span id="cb46-19"><a href="" aria-label="19"></a>          i <span class="op">+=</span> currentCellSize<span class="op">+</span><span class="fl">1</span></span>
+<span id="cb46-20"><a href="" aria-label="20"></a>          cellIdx <span class="op">+=</span> <span class="fl">1</span></span>
+<span id="cb46-21"><a href="" aria-label="21"></a>     <span class="cf">end</span></span>
+<span id="cb46-22"><a href="" aria-label="22"></a>     <span class="cf">return</span> <span class="fu">Mesh</span>(pointsData, cells)</span>
+<span id="cb46-23"><a href="" aria-label="23"></a> <span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>testé avec VTK-9.6.2-7 sur Arch Linux</li>
+</ul>
+</section></section>
+<section>
+<section id="pour-ne-pas-manquer-dr" class="title-slide slide level1 center">
+<h1>pour ne pas manquer d’R 😮‍💨</h1>
+<ul>
+<li><p><code>RCall.jl</code> permet d’appeler du R depuis Julia</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb47-1"><a href="" aria-label="1"></a>julia<span class="op">&gt;</span> <span class="im">using</span> <span class="bu">RCall</span></span>
+<span id="cb47-2"><a href="" aria-label="2"></a></span>
+<span id="cb47-3"><a href="" aria-label="3"></a>julia<span class="op">&gt;</span> n_ju <span class="op">=</span> <span class="fu">rcopy</span>(R<span class="st">"""rnorm(</span><span class="sc">$</span>((x<span class="op">-&gt;</span>x<span class="op">*</span>x).(<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>))<span class="st">)"""</span>); n_ju<span class="op">'</span></span>
+<span id="cb47-4"><a href="" aria-label="4"></a><span class="fl">1</span><span class="op">×</span><span class="fl">10</span> <span class="fu">adjoint</span>(<span class="op">::</span><span class="dt">Vector{Float64}</span>) with eltype <span class="dt">Float64</span><span class="op">:</span></span>
+<span id="cb47-5"><a href="" aria-label="5"></a> <span class="op">-</span><span class="fl">0.831815</span>  <span class="fl">1.17597</span>  <span class="op">-</span><span class="fl">0.152008</span>  <span class="fl">0.552661</span>  <span class="fl">0.727258</span>  <span class="fl">1.10984</span>  <span class="op">-</span><span class="fl">0.00164307</span>  <span class="fl">0.343077</span>  <span class="fl">0.475315</span>  <span class="op">-</span><span class="fl">1.55768</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Explications :</p>
+<ul>
+<li><code>R"""ma_chaîne_en_R"""</code> renvoies un objet R</li>
+<li><code>rcopy(obj)</code> convertit en copiant <code>obj</code> en Julia</li>
+<li><code>$</code> à l’intérieur de permet d’appeler du code Julia (interpolation)</li>
+</ul></li>
+</ul>
+</section>
+<section id="appel-r-suite" class="slide level2">
+<h2>appel R (suite)</h2>
+<ul>
+<li><p>Choisir son interprète : si vous n’aimez pas Conda (comme moi <span class="emoji" data-emoji="angry">😠</span>)</p>
+<div title="Configurer RCall">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Configurer RCall</strong></p>
+</div>
+<div class="callout-content">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb48-1"><a href="" aria-label="1"></a><span class="cn">ENV</span>[<span class="st">"R_HOME"</span>] <span class="op">=</span> <span class="st">"/path/vers/lib/R/"</span> <span class="co"># donc /path/vers/lib/R/bin/R est l'executable!</span></span>
+<span id="cb48-2"><a href="" aria-label="2"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
+<span id="cb48-3"><a href="" aria-label="3"></a><span class="bu">Pkg</span>.<span class="fu">build</span>(<span class="st">"RCall"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div></li>
+<li><p>import de data frame R</p></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb49-1"><a href="" aria-label="1"></a>julia<span class="op">&gt;</span> df_ju <span class="op">=</span> <span class="fu">rcopy</span>(<span class="fu">reval</span>(<span class="st">"iris"</span>))</span>
+<span id="cb49-2"><a href="" aria-label="2"></a><span class="fl">150</span><span class="op">×</span><span class="fl">5</span> DataFrame</span>
+<span id="cb49-3"><a href="" aria-label="3"></a> Row │ Sepal_Length  Sepal_Width  Petal_Length  Petal_Width  Species</span>
+<span id="cb49-4"><a href="" aria-label="4"></a>     │ <span class="dt">Float64</span>       <span class="dt">Float64</span>      <span class="dt">Float64</span>       <span class="dt">Float64</span>      Cat<span class="op">…</span></span>
+<span id="cb49-5"><a href="" aria-label="5"></a>─────┼─────────────────────────────────────────────────────────────────</span>
+<span id="cb49-6"><a href="" aria-label="6"></a>   <span class="fl">1</span> │          <span class="fl">5.1</span>          <span class="fl">3.5</span>           <span class="fl">1.4</span>          <span class="fl">0.2</span>  setosa</span>
+<span id="cb49-7"><a href="" aria-label="7"></a>   <span class="fl">2</span> │          <span class="fl">4.9</span>          <span class="fl">3.0</span>           <span class="fl">1.4</span>          <span class="fl">0.2</span>  setosa</span>
+<span id="cb49-8"><a href="" aria-label="8"></a>   <span class="fl">3</span> │          <span class="fl">4.7</span>          <span class="fl">3.2</span>           <span class="fl">1.3</span>          <span class="fl">0.2</span>  setosa</span>
+<span id="cb49-9"><a href="" aria-label="9"></a>   <span class="fl">4</span> │          <span class="fl">4.6</span>          <span class="fl">3.1</span>           <span class="fl">1.5</span>          <span class="fl">0.2</span>  setosa</span>
+<span id="cb49-10"><a href="" aria-label="10"></a>   <span class="fl">5</span> │          <span class="fl">5.0</span>          <span class="fl">3.6</span>           <span class="fl">1.4</span>          <span class="fl">0.2</span>  setosa</span>
+<span id="cb49-11"><a href="" aria-label="11"></a>  <span class="op">⋮</span> │      <span class="op">⋮</span>             <span class="op">⋮</span>            <span class="op">⋮</span>             <span class="op">⋮</span>           <span class="op">⋮</span></span>
+<span id="cb49-12"><a href="" aria-label="12"></a> <span class="fl">141</span> │          <span class="fl">6.7</span>          <span class="fl">3.1</span>           <span class="fl">5.6</span>          <span class="fl">2.4</span>  virginica</span>
+<span id="cb49-13"><a href="" aria-label="13"></a> <span class="fl">142</span> │          <span class="fl">6.9</span>          <span class="fl">3.1</span>           <span class="fl">5.1</span>          <span class="fl">2.3</span>  virginica</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section></section>
+<section id="conclusion" class="title-slide slide level1 center">
+<h1>conclusion</h1>
+<ul>
+<li>interfaçage simple avec C/Fortran pour des types élémentaires</li>
+<li>outils de portabilité 🢣 <a href="https://binarybuilder.org/">BinaryBuilder.jl</a></li>
+<li>proposez votre logiciel à <a href="https://github.com/JuliaPackaging/Yggdrasil/">Yggdrasil</a> en faisant une demande d’ajout</li>
+<li>cherchez de l’info sur <a href="https://github.com/JuliaInterop">JuliaInterop</a></li>
+<li>posez des questions sur <a href="https://discourse.julialang.org/">Julia discourse</a></li>
+</ul>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
