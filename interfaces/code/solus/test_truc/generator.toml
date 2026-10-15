@@ -1,0 +1,4 @@
+[general]
+library_name = "liballoc"
+output_file_path = "./Liballoc.jl"
+module_name = "Liballoc"
