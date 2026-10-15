@@ -12,10 +12,10 @@ Les objectifs de la formation sont:
 
 ## Programme
 
-- David Métivier "Présentation générale Julia et de quelques écosystèmes et création de packages". Le matériel est disponible sur ce [repo](https://github.com/dmetivie/2026_formation_Julia)
-- Zois Moitier "Profilage et Optimisation de performances" [repo](https://github.com/groupecalcul/JuliaFrejus2026/optimization)
+- David Métivier "Présentation générale Julia et de quelques écosystèmes et création de packages". [Link to repo](https://github.com/dmetivie/2026_formation_Julia)
+- Zois Moitier "Profilage et Optimisation de performances". [Link to repo](https://github.com/groupecalcul/JuliaFrejus2026/optimization)
 - Luiz Faria "Parallélisation à mémoire partagée Threads.jl DataFlowTaks.jl". [Link to repo](https://github.com/maltezfaria/2026-frejus.git)
-- [Ludovic Räss "GPU"](https://github.com/luraess/Julia4HPC-GPU) 
+- Ludovic Räss "GPU computing in Julia for HPC". [Link to repo](https://github.com/luraess/Julia4HPC-GPU) 
 - Oskar Laverny "Dispatch multiple et typage générique BigFloats"
 - Marc Fuentes "Interface avec C/Fortran/Python"
 - Marc Fuentes "Création de dépendances compilées avec BinaryBuilder.jl"
