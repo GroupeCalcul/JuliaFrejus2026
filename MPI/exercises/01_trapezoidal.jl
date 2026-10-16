@@ -7,7 +7,7 @@ nranks = MPI.Comm_size(comm)
 rank = MPI.Comm_rank(comm)
 
 f(x) = 4 * sqrt(1 - x^2)
-N = 211  # prime number (to make things fun)
+N = 211  # prime number (to make things more interesting)
 xs = range(0, 1; length = N + 1)  # evaluation points (equidistant)
 
 # Local integration interval (making sure there is no overlap)
