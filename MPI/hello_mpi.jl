@@ -1,8 +1,11 @@
 using MPI
+
 MPI.Init()
 
 comm = MPI.COMM_WORLD
-println("Hello world, I am $(MPI.Comm_rank(comm)) of $(MPI.Comm_size(comm))")
+rank = MPI.Comm_rank(comm)
+nranks = MPI.Comm_size(comm)
 
-MPI.Barrier(comm)
+println("Hello world, I am $rank of $nranks")
+
 MPI.Finalize()
