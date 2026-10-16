@@ -19,7 +19,7 @@ Les objectifs de la formation sont:
 - Oskar Laverny "Dispatch multiple et typage générique BigFloats" [supports](https://github.com/groupecalcul/JuliaFrejus2026/precision).
 - Marc Fuentes "Interface avec C/Fortran/Python" [supports](https://github.com/groupecalcul/JuliaFrejus2026/interfaces).
 - Marc Fuentes "Création de dépendances compilées avec BinaryBuilder.jl"
-- Juan-Ignacio Polanco "MPI"
+- Juan-Ignacio Polanco "MPI" [supports](https://github.com/groupecalcul/JuliaFrejus2026/MPI/supports.pdf)
 
 ## Scripts SLURM
 
