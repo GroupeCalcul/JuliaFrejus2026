@@ -1,4 +1,9 @@
 # This is a working example of solving the 2D heat equation using FFTs.
+#
+# For nicer coloured output, run as:
+#
+#   mpirun -n N julia --project --color=yes 05_heat_fourier_2d.jl
+#
 
 using MPI
 using PencilArrays
@@ -45,6 +50,8 @@ function plot_field(filename, xs_global, u::PencilArray)
     save(filename, fig)
 end
 
+## ================================================================================ ##
+
 MPI.Init()
 
 comm = MPI.COMM_WORLD
@@ -62,21 +69,25 @@ xs_global = (
 # Create domain decomposition (a "Pencil")
 pen = Pencil(Ns, comm)     # domain decomposition
 grid = localgrid(pen, xs_global)  # local grid
+rank == 0 && @info "Created decomposition" pen
 visualise_decomposition("decomp_phys.svg", pen)
 
 # Initial condition (Gaussian)
 x₀, y₀ = Ls[1] / 2, Ls[2] / 2
 σ = Ls[1] / 8
 u_init = PencilArray{Float64}(undef, pen)  # contains local data
+rank == 0 && @info "Initialised array" summary(u_init)
 @. u_init = exp(-((grid.x - x₀)^2 + (grid.y - y₀)^2) / (2 * σ^2))
 plot_field("u_initial.svg", xs_global, u_init)
 
 # Perform parallel FFT
 plan = PencilFFTPlan(u_init, Transforms.RFFT())
+rank == 0 && @info "Created FFT plan" plan
 u_hat = plan * u_init
 
 # Let's look at the decomposition of u_hat
 pen_f = pencil(u_hat)  # decomposition in Fourier space
+rank == 0 && @info "Performed FFT" pen_f summary(u_hat)
 visualise_decomposition("decomp_fourier.svg", pen_f)
 
 # Define grid in Fourier space (wavenumbers kx, ky)
@@ -102,17 +113,30 @@ end
 
 # Transform back to physical space
 u_final = plan \ u_hat
-
 plot_field("u_final.svg", xs_global, u_final)
-if rank == root
-    # Plot 1D "slice" of the solution at the initial and final times.
-    let fig = Figure(size = (400, 300))
-        ax = Axis(fig[1, 1]; xlabel = L"x", ylabel = L"u(x)")
-        lines!(ax, xs_global[1], u_init_global[:, end ÷ 2]; label = "Initial")
-        lines!(ax, xs_global[1], u_final_global[:, end ÷ 2]; label = "Final")
-        axislegend(ax; position = (1, 1))
-        save("u_middle.svg", fig)
-    end
+
+# Write result to binary file in parallel
+using PencilArrays.PencilIO
+
+# By default the output file is independent of the number of MPI processes.
+# In general, this means that each process needs to write to discontiguous views of the file.
+# This also saves a `u_final.dat.json` file with metadata which can be useful for reading
+# back the file (poor man's HDF5).
+open(MPIIODriver(), "u_final.dat", comm; write = true) do fh
+    fh["temperature"] = u_final
 end
+
+# Alternatively, if HDF5.jl is loaded and parallel HDF5 is enabled:
+# open(PHDF5Driver(), "u_final.h5", comm; write = true) do fh
+#     fh["temperature"] = u_final
+# end
+
+# Read the file back
+u_read = similar(u_final)
+open(MPIIODriver(), "u_final.dat", comm; read = true) do fh
+    read!(fh, u_read, "temperature")
+end
+
+@show u_read == u_final
 
 MPI.Finalize()
